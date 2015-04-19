@@ -1,0 +1,65 @@
+---
+title: "Project 6: Data Blending"
+author: "Jeffrey Zhang and Jaclyn Nguyen"
+date: April 22, 2015
+output: html_document
+---
+
+
+
+####__1. Loading of R packages: RCurl, ggplot2, extrafont, jsonlite, dplyr, tidyr, extrafont, jsonlite, reshape2 (R code not shown)__
+
+```{r, include=FALSE}
+library(RCurl)
+library (ggplot2)
+library(extrafont)
+library(reshape2)
+require(jsonlite)
+require(dplyr)
+require(tidyr)
+require(reshape2)
+```
+
+####__2. Data__
+Dataset: GOVSPENDING2006(161 obs), GOVSPENDING2007(3024 obs), GOVSPENDING2008(4896 obs), GOVSPENDING2009(3194 obs), CENSUSCOUNTY(3194 obs)
+
+Description of data:
+Every year, the US Federal Government allocates money into different areas such as grants, contracts, loans, insurance, direct payments, and others.The US Federal Website breaks the funding into different datasets available publicly based on the category of funding. For this project, we will concentrate on the Federal Spending - Others which include federal spending on items that were originally not budgeted for in the fiscal year. Below describes the types of funding from the federal government in the "Others" category:
+
+A. New assistance action (new program initiatves)
+
+B. Continuation (funding in succeeding budget period which stemmed from prior agreement to fund amount of the current action)
+
+C. Revision (any change in Federal Government's financial obligation or contingent liability in existing assistance transaction amount)
+
+D. Funding adjustment to completed project
+
+[DATA FEEDS AND ARCHIVES DATA DICTIONARY](http://www.usaspending.gov/sites/all/themes/usaspendingv2/Archives_Data_Feeds_Data_Dictionary.pdf) provides additional information on the following data
+
+In order to support further analysis, we are using census data to determine efficacy of the funding.
+
+Oracle SQL Developer: C##CS329E_JCN565
+
+####__3. Analysis and visuals__
+
+
+```{r}
+df_06_state_fund <- df_06 %>% select(PRINCIPAL_PLACE_STATE,FED_FUNDING_AMOUNT_06) %>% filter(PRINCIPAL_PLACE_STATE != '0' && PRINCIPAL_PLACE_STATE != 'null') %>% group_by(PRINCIPAL_PLACE_STATE) %>% summarise(total_fund = sum(FED_FUNDING_AMOUNT_06)) # bug can not get rid of 0
+
+df_06_state_fund %>% ggplot(aes(x=PRINCIPAL_PLACE_STATE, y=total_fund)) + geom_bar(stat="identity",fill="white",colour="darkgreen") + theme(axis.text.x=element_text(angle=90, size=20, vjust=0.5)) + theme(axis.text.x=element_text(size=10, face="bold", vjust=1)) + theme(axis.title.x=element_text(color="forestgreen", vjust=0.35),axis.title.y=element_text(color="cadetblue", vjust=0.35)) + labs(title="Fed_fund_06 VS States",y="Total_fund",x="State")
+
+```
+
+Blend 07 with 06
+```{r}
+df_0607_blendBystate <- left_join(df_06,df_07,by='PRINCIPAL_PLACE_STATE') %>% select(PRINCIPAL_PLACE_STATE,FED_FUNDING_AMOUNT_07) %>% filter(PRINCIPAL_PLACE_STATE != '0' && PRINCIPAL_PLACE_STATE != 'null') %>% group_by(PRINCIPAL_PLACE_STATE) %>% summarise(total_fund = sum(FED_FUNDING_AMOUNT_07))
+# bug can not get rid of 0 and there is null??
+
+df_0607_blendBystate %>% ggplot(aes(x=PRINCIPAL_PLACE_STATE, y=total_fund)) + geom_bar(stat="identity",fill="white",colour="darkgreen") + theme(axis.text.x=element_text(angle=90, size=20, vjust=0.5)) + theme(axis.text.x=element_text(size=10, face="bold", vjust=1)) + theme(axis.title.x=element_text(color="forestgreen", vjust=0.35),axis.title.y=element_text(color="cadetblue", vjust=0.35)) + labs(title="Fed_fund_07 VS States",y="Total_fund",x="State")
+
+
+
+
+```
+
+
