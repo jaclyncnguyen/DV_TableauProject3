@@ -81,3 +81,12 @@ df_0807_blendByagency <- left_join(df_07,df_08,by='AGENCY_NAME') %>% select(AGEN
 
 df_0807_blendByagency %>% ggplot(aes(x=AGENCY_NAME, y=total_fund)) + geom_bar(stat="identity",fill="white",colour="darkgreen") + theme(axis.text.x=element_text(angle=90, size=20, vjust=0.5)) + theme(axis.text.x=element_text(size=10, face="bold", vjust=1)) + theme(axis.title.x=element_text(color="forestgreen", vjust=0.35),axis.title.y=element_text(color="cadetblue", vjust=0.35)) + labs(title="Fed_fund_0807_blend VS Agencies",y="Total_fund",x="Agency")
 ```
+
+
+All data blending was created in Tableau. Below will break down the steps on how we analyzed our data using data blending. 
+1. Connecting to datasets in one worksheet.
+![](./connect.png)
+
+![](./EditRelation.png)
+
+![](./Relationship.png)
