@@ -42,51 +42,14 @@ Oracle SQL Developer: C##CS329E_JCN565
 
 ####__3. Analysis and visuals__
 
-#### load data in 
-```{r}
-source("../01 Data/df_06.R",echo = T)
-tbl_df(df_06)
-source("../01 Data/df_07.R",echo = T)
-tbl_df(df_07)
-source("../01 Data/df_08.R",echo = T)
-tbl_df(df_08)
-```
-
-#### get df_06_fund_by_state and plot
-```{r,warning=FALSE}
-df_06_state_fund <- df_06 %>% select(PRINCIPAL_PLACE_STATE,FED_FUNDING_AMOUNT_06) %>% filter(PRINCIPAL_PLACE_STATE != '0' && PRINCIPAL_PLACE_STATE != 'null') %>% group_by(PRINCIPAL_PLACE_STATE) %>% summarise(total_fund = sum(FED_FUNDING_AMOUNT_06)) # bug can not get rid of 0
-
-df_06_state_fund %>% ggplot(aes(x=PRINCIPAL_PLACE_STATE, y=total_fund)) + geom_bar(stat="identity",fill="white",colour="darkgreen") + theme(axis.text.x=element_text(angle=90, size=20, vjust=0.5)) + theme(axis.text.x=element_text(size=10, face="bold", vjust=1)) + theme(axis.title.x=element_text(color="forestgreen", vjust=0.35),axis.title.y=element_text(color="cadetblue", vjust=0.35)) + labs(title="Fed_fund_06 VS States",y="Total_fund",x="State")
-```
-
-#### then blend df_07 with df_06 linking by PRINCIPAL_PLACE_STATE in df_06 to get 07_06_state_fund_blend (Same as df_06 left join df_07 by PRINCIPAL_PLACE_STATE)
-```{r,warning=FALSE}
-df_0706_blendBystate <- left_join(df_06,df_07,by='PRINCIPAL_PLACE_STATE') %>% select(PRINCIPAL_PLACE_STATE,FED_FUNDING_AMOUNT_07) %>% filter(PRINCIPAL_PLACE_STATE != '0' && PRINCIPAL_PLACE_STATE != 'null') %>% group_by(PRINCIPAL_PLACE_STATE) %>% summarise(total_fund = sum(FED_FUNDING_AMOUNT_07))
-# bug can not get rid of 0 and there is null??
-
-df_0706_blendBystate %>% ggplot(aes(x=PRINCIPAL_PLACE_STATE, y=total_fund)) + geom_bar(stat="identity",fill="white",colour="darkgreen") + theme(axis.text.x=element_text(angle=90, size=20, vjust=0.5)) + theme(axis.text.x=element_text(size=10, face="bold", vjust=1)) + theme(axis.title.x=element_text(color="forestgreen", vjust=0.35),axis.title.y=element_text(color="cadetblue", vjust=0.35)) + labs(title="Fed_fund_0706_blend VS States",y="Total_fund",x="State")
-
-```
-
-#### get df_07_agency_fund and plot
-```{r,warning=FALSE}
-df_07_agency_fund <- df_07 %>% select(AGENCY_NAME,FED_FUNDING_AMOUNT_07) %>% filter(AGENCY_NAME != '0' && AGENCY_NAME != 'null') %>% group_by(AGENCY_NAME) %>% summarise(total_fund = sum(FED_FUNDING_AMOUNT_07))
-df_07_agency_fund %>% ggplot(aes(x=AGENCY_NAME, y=total_fund)) + geom_bar(stat="identity",fill="white",colour="darkgreen") + theme(axis.text.x=element_text(angle=90, size=20, vjust=0.5)) + theme(axis.text.x=element_text(size=10, face="bold", vjust=1)) + theme(axis.title.x=element_text(color="forestgreen", vjust=0.35),axis.title.y=element_text(color="cadetblue", vjust=0.35)) + labs(title="Fed_fund_07 VS Agencies",y="Total_fund",x="Agency")
-
-```
-
-#### then blend df_08 with df_07 linking by agencies in df_07 to get 08_07_agency_fund_blend (Same as df_07 left join df_08 by AGENCY_NAME)
-```{r,warning=FALSE}
-df_0807_blendByagency <- left_join(df_07,df_08,by='AGENCY_NAME') %>% select(AGENCY_NAME,FED_FUNDING_AMOUNT_07) %>% filter(AGENCY_NAME != '0' && AGENCY_NAME != 'null') %>% group_by(AGENCY_NAME) %>% summarise(total_fund = sum(FED_FUNDING_AMOUNT_07))
-
-df_0807_blendByagency %>% ggplot(aes(x=AGENCY_NAME, y=total_fund)) + geom_bar(stat="identity",fill="white",colour="darkgreen") + theme(axis.text.x=element_text(angle=90, size=20, vjust=0.5)) + theme(axis.text.x=element_text(size=10, face="bold", vjust=1)) + theme(axis.title.x=element_text(color="forestgreen", vjust=0.35),axis.title.y=element_text(color="cadetblue", vjust=0.35)) + labs(title="Fed_fund_0807_blend VS Agencies",y="Total_fund",x="Agency")
-```
-
 
 All data blending was created in Tableau. Below will break down the steps on how we analyzed our data using data blending. 
+
 1. Connecting to datasets in one worksheet.
 ![](./connect.png)
 
+2. Each visual is blended based on four different categories: State, City, Funding Agency, and Recipient Type. Our project also blends between different years of datasource.
 ![](./EditRelation.png)
 
+3. The image below shows the screen in which we select the different categories to blend.
 ![](./Relationship.png)
